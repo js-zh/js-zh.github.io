@@ -1,0 +1,581 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android系统," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="从事Android系统相关开发工作的coder肯定会是需要在Ubuntu系统下编译打包工作，包括android，kernel，uboot相关镜像编译打包，而且还需要手动从各个目录下进行拷贝到指定的打包目录， 各个部分需要执行的命令又不一样，如此反复操作必然造成重复劳动效率低下地问题，为了避免这样的问题，我建议使用shell脚本来帮助协助你完成这样繁琐的工作，提高效率。这里提供一个满足基本编译打包的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用shell协助自动编译打包Android">
+<meta property="og:url" content="http://yoursite.com/2016/05/06/使用shell协助自动编译打包Android/index.html">
+<meta property="og:site_name" content="JCoder's World">
+<meta property="og:description" content="从事Android系统相关开发工作的coder肯定会是需要在Ubuntu系统下编译打包工作，包括android，kernel，uboot相关镜像编译打包，而且还需要手动从各个目录下进行拷贝到指定的打包目录， 各个部分需要执行的命令又不一样，如此反复操作必然造成重复劳动效率低下地问题，为了避免这样的问题，我建议使用shell脚本来帮助协助你完成这样繁琐的工作，提高效率。这里提供一个满足基本编译打包的">
+<meta property="og:updated_time" content="2016-05-06T09:45:37.929Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用shell协助自动编译打包Android">
+<meta name="twitter:description" content="从事Android系统相关开发工作的coder肯定会是需要在Ubuntu系统下编译打包工作，包括android，kernel，uboot相关镜像编译打包，而且还需要手动从各个目录下进行拷贝到指定的打包目录， 各个部分需要执行的命令又不一样，如此反复操作必然造成重复劳动效率低下地问题，为了避免这样的问题，我建议使用shell脚本来帮助协助你完成这样繁琐的工作，提高效率。这里提供一个满足基本编译打包的">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 使用shell协助自动编译打包Android | JCoder's World </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">JCoder's World</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用shell协助自动编译打包Android
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-06T17:35:12+08:00" content="2016-05-06">
+              2016-05-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开发</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>从事Android系统相关开发工作的coder肯定会是需要在Ubuntu系统下编译打包工作，包括android，kernel，uboot相关镜像编译打包，而且还需要手动从各个目录下进行拷贝到指定的打包目录， 各个部分需要执行的命令又不一样，如此反复操作必然造成重复劳动效率低下地问题，为了避免这样的问题，我建议使用shell脚本来帮助协助你完成这样繁琐的工作，提高效率。<br>这里提供一个满足基本编译打包的框架，大家可以根据自己业务需求对脚本进行处理。<br><a id="more"></a></p>
+<p>###命名shell脚本为buildsys.sh<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">export</span> CODEDIR=`<span class="built_in">pwd</span>`</span><br><span class="line"><span class="built_in">export</span> KERNEL_DIR=<span class="variable">$CODEDIR</span>/kernel</span><br><span class="line"><span class="built_in">export</span> UBOOT_DIR=<span class="variable">$CODEDIR</span>/u-boot</span><br><span class="line"><span class="built_in">export</span> ANDROID_IMG_DIR=<span class="variable">$CODEDIR</span>/rockdev/Image-rk3288_box</span><br><span class="line"><span class="built_in">export</span> PKG_IMG_DIR=<span class="variable">$CODEDIR</span>/Image</span><br><span class="line"><span class="built_in">export</span> ANDROID_OUT_TARGET_DIR=<span class="variable">$CODEDIR</span>/out/target/product/rk3288_box</span><br><span class="line"><span class="built_in">export</span> PRODUCT_NAME1=plycom</span><br><span class="line"><span class="built_in">export</span> CUSTOMER_NAME=OWNER</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$CODEDIR</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$KERNEL_DIR</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$UBOOT_DIR</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$ANDROID_IMG_DIR</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">copyAndroidImg</span></span>()&#123;</span><br><span class="line">	<span class="built_in">cd</span> <span class="variable">$ANDROID_IMG_DIR</span> </span><br><span class="line">	<span class="keyword">for</span> IMG <span class="keyword">in</span> $(ls <span class="variable">$ANDROID_IMG_DIR</span>)</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">		cp -rf  <span class="variable">$ANDROID_IMG_DIR</span>/<span class="variable">$IMG</span> <span class="variable">$PKG_IMG_DIR</span></span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">clean_android</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"clean_android"</span></span><br><span class="line">	<span class="built_in">cd</span> <span class="variable">$ANDROID_OUT_TARGET_DIR</span></span><br><span class="line">	rm *.img</span><br><span class="line">	rm -rf <span class="variable">$ANDROID_OUT_TARGET_DIR</span>/system</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">build_kernel</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">echo</span> <span class="variable">$PRODUCT_NAME1</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"build_kernel"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">build_uboot</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">echo</span> <span class="variable">$PRODUCT_NAME1</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"build_uboot"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">build_android</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">cd</span> <span class="variable">$CODEDIR</span></span><br><span class="line">	<span class="built_in">source</span> build.sh</span><br><span class="line">	lunch rk3288_box-userdebug</span><br><span class="line">	<span class="built_in">export</span> PRODUCT_NAME1</span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"PRODUCT_NAME1 =<span class="variable">$PRODUCT_NAME1</span>"</span></span><br><span class="line">	make -j8</span><br><span class="line">	./mkimage.sh</span><br><span class="line">	copyAndroidImg</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">build_all</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	build_kernel</span><br><span class="line">	build_uboot</span><br><span class="line">	build_android</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">exec_fun</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"<span class="variable">$1</span>"</span> <span class="keyword">in</span></span><br><span class="line">        all)</span><br><span class="line">            build_all</span><br><span class="line">            ;;  </span><br><span class="line">        android)</span><br><span class="line">            build_android</span><br><span class="line">            ;;  </span><br><span class="line">        kernel)</span><br><span class="line">            build_kernel</span><br><span class="line">            ;;  </span><br><span class="line">        uboot)</span><br><span class="line">            build_uboot</span><br><span class="line">            ;;  </span><br><span class="line">	clean_an)</span><br><span class="line">            clean_android</span><br><span class="line">            ;;  </span><br><span class="line">        *)  </span><br><span class="line">    <span class="keyword">esac</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#带选项传参</span></span><br><span class="line"><span class="comment">#用法举例:./buildsys.sh -p PRO1 -c CUSTOM1 </span></span><br><span class="line"><span class="comment">#使用export声明后，相应的参数可以传入其他mk文件，如device.mk可以使用该变量</span></span><br><span class="line"><span class="keyword">while</span> <span class="built_in">getopts</span> <span class="string">"p:c:"</span> OPT</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="keyword">case</span> <span class="variable">$OPT</span> <span class="keyword">in</span></span><br><span class="line">        p) PRODUCT_NAME1=<span class="variable">$OPTARG</span>;;</span><br><span class="line">		c) CUSTOMER_NAME=<span class="variable">$OPTARG</span>;;</span><br><span class="line">        ?)  Usage</span><br><span class="line">            <span class="built_in">exit</span> 2;; </span><br><span class="line">   <span class="keyword">esac</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="comment">#直接传参</span></span><br><span class="line"><span class="comment">#用法举例:./buildsys.sh all,默认执行 buildAndroid函数</span></span><br><span class="line"><span class="comment">#这里可以和带选项传参函数一起使用</span></span><br><span class="line"><span class="comment">#/buildsys.sh -p PRO1 all</span></span><br><span class="line"><span class="comment">#注：带选项参数须在普通传参前面</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$#</span>"</span> == 0 ]; <span class="keyword">then</span></span><br><span class="line">	build_android</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> <span class="string">"<span class="variable">$@</span>"</span>; <span class="keyword">do</span></span><br><span class="line">        <span class="built_in">exec</span>_fun <span class="variable">$f</span></span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
+<p>如果对shell脚本还不是特别熟悉的话，可以自行查阅相关资料。<br>这里需要着重学习下几个参数的用法。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.getops 带选项参数</span><br><span class="line">2.<span class="variable">$#</span> 表示传入参数个数</span><br><span class="line">3.<span class="variable">$@</span> 表示全部传入参数</span><br></pre></td></tr></table></figure></p>
+<!--more-->
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android系统/" rel="tag">#Android系统</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/05/Android系统使用Shell脚本预装apk/" rel="next" title="Android系统使用Shell脚本预装apk">
+                <i class="fa fa-chevron-left"></i> Android系统使用Shell脚本预装apk
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Jason_Zhang" />
+          <p class="site-author-name" itemprop="name">Jason_Zhang</p>
+          <p class="site-description motion-element" itemprop="description">记录分享我的开发经验</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason_Zhang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
