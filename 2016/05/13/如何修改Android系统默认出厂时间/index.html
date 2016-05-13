@@ -80,16 +80,16 @@
 
 
 
-<meta name="description" content="客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。考虑到需要批量安装应用，我这里考虑到使用灵活的shell脚本。shell脚本可以通过修改init.rc令其可以在开机时运行启动，同时可以加入限制相应的判断条件让其在首次只run一次，这里命名shell脚本为install_apk.sh。以下是init.rc的配置启动服务，通过">
+<meta name="description" content="昨天客户的工程师问我如何修改系统默认出厂时间，因为他的客户说机器的默认出厂时间太老了，现在都2016年机器的默认出厂时间还是2008年。因为系统的默认时间在在RTC（Real-Time Clock）初始化的，在rtc驱动里面找到那个初始化的时间戳就可以修改掉系统默认的出厂时间了。具体路径在/kernel/drivers/rtc下，具体的平台不同代码位置大概也不一样，这里贴出我找到的代码，我这边默认">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android系统使用Shell脚本预装apk">
-<meta property="og:url" content="http://yoursite.com/2016/05/05/Android系统使用Shell脚本预装apk/index.html">
+<meta property="og:title" content="如何修改Android系统默认出厂时间">
+<meta property="og:url" content="http://yoursite.com/2016/05/13/如何修改Android系统默认出厂时间/index.html">
 <meta property="og:site_name" content="JCoder's World">
-<meta property="og:description" content="客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。考虑到需要批量安装应用，我这里考虑到使用灵活的shell脚本。shell脚本可以通过修改init.rc令其可以在开机时运行启动，同时可以加入限制相应的判断条件让其在首次只run一次，这里命名shell脚本为install_apk.sh。以下是init.rc的配置启动服务，通过">
-<meta property="og:updated_time" content="2016-05-05T05:49:49.504Z">
+<meta property="og:description" content="昨天客户的工程师问我如何修改系统默认出厂时间，因为他的客户说机器的默认出厂时间太老了，现在都2016年机器的默认出厂时间还是2008年。因为系统的默认时间在在RTC（Real-Time Clock）初始化的，在rtc驱动里面找到那个初始化的时间戳就可以修改掉系统默认的出厂时间了。具体路径在/kernel/drivers/rtc下，具体的平台不同代码位置大概也不一样，这里贴出我找到的代码，我这边默认">
+<meta property="og:updated_time" content="2016-05-13T13:26:43.690Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android系统使用Shell脚本预装apk">
-<meta name="twitter:description" content="客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。考虑到需要批量安装应用，我这里考虑到使用灵活的shell脚本。shell脚本可以通过修改init.rc令其可以在开机时运行启动，同时可以加入限制相应的判断条件让其在首次只run一次，这里命名shell脚本为install_apk.sh。以下是init.rc的配置启动服务，通过">
+<meta name="twitter:title" content="如何修改Android系统默认出厂时间">
+<meta name="twitter:description" content="昨天客户的工程师问我如何修改系统默认出厂时间，因为他的客户说机器的默认出厂时间太老了，现在都2016年机器的默认出厂时间还是2008年。因为系统的默认时间在在RTC（Real-Time Clock）初始化的，在rtc驱动里面找到那个初始化的时间戳就可以修改掉系统默认的出厂时间了。具体路径在/kernel/drivers/rtc下，具体的平台不同代码位置大概也不一样，这里贴出我找到的代码，我这边默认">
 
 
 
@@ -107,7 +107,7 @@
   };
 </script>
 
-  <title> Android系统使用Shell脚本预装apk | JCoder's World </title>
+  <title> 如何修改Android系统默认出厂时间 | JCoder's World </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -256,7 +256,7 @@
             
             
               
-                Android系统使用Shell脚本预装apk
+                如何修改Android系统默认出厂时间
               
             
           </h1>
@@ -268,8 +268,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-05-05T13:38:48+08:00" content="2016-05-05">
-              2016-05-05
+            <time itemprop="dateCreated" datetime="2016-05-13T21:23:59+08:00" content="2016-05-13">
+              2016-05-13
             </time>
           </span>
 
@@ -298,8 +298,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/05/05/Android系统使用Shell脚本预装apk/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/05/Android系统使用Shell脚本预装apk/" itemprop="commentsCount"></span>
+                <a href="/2016/05/13/如何修改Android系统默认出厂时间/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/13/如何修改Android系统默认出厂时间/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -327,17 +327,8 @@
       
 
       
-        <h3 id="客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。"><a href="#客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。" class="headerlink" title="客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。"></a>客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。</h3><p>考虑到需要批量安装应用，我这里考虑到使用灵活的shell脚本。shell脚本可以通过修改init.rc令其可以在开机时运行启动，同时可以加入限制相应的判断条件让其在首次只run一次，这里命名shell脚本为install_apk.sh。以下是init.rc的配置启动服务，通过添加如下声明可以让Android系统在启动时运行install_apk.sh<br><a id="more"></a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#install apk</span></span><br><span class="line">service install_apk /system/bin/install_apk.sh</span><br><span class="line">	class main</span><br><span class="line">	oneshot</span><br></pre></td></tr></table></figure></p>
-<p>接下来我们来看install_apk.sh的实现，这里设计shell脚本的功能主要是实现安装指定目录下的apk，并且只运行一次，我们直接看脚本代码。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/system/bin/sh</span></span><br><span class="line">installed_mode=`/system/bin/getprop <span class="string">"persist.sys.apk.installed"</span>`</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$installed_mode</span>"</span> != <span class="string">"DONE"</span> ]; <span class="keyword">then</span></span><br><span class="line">	DIR=<span class="string">"/system/usr/app"</span></span><br><span class="line">	DATA_DIR=<span class="string">"/data/app"</span></span><br><span class="line">	<span class="built_in">cd</span> <span class="variable">$DIR</span></span><br><span class="line">	<span class="keyword">for</span> apk <span class="keyword">in</span> $(ls <span class="variable">$DIR</span>)</span><br><span class="line">		<span class="keyword">do</span></span><br><span class="line">		busybox cp <span class="variable">$DIR</span>/<span class="variable">$apk</span> <span class="variable">$DATA_DIR</span></span><br><span class="line">		chmod 777 <span class="variable">$DATA_DIR</span>/<span class="variable">$apk</span></span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">/system/bin/setprop persist.sys.apk.installed DONE</span><br></pre></td></tr></table></figure></p>
-<p>脚本的功能是划分以下两个部分</p>
-<p>1、查询/system/usr/app下的全部apk，通过copy到/data/app和修改其权限实现apk的安装，</p>
-<p>2、通过系统属性persist.sys.apk.installed赋值给installed_mode变量，判断应用是否已经安装运行</p>
-<p>这里可以查询关于shell脚本的for使用方法进行优化，避免重复操作，之前少量apk的时候我是这样写的，如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">busybox cp /system/usr/app/OfficeSuite.apk data/app</span><br><span class="line">busybox cp /system/usr/app/ES.apk data/app</span><br><span class="line">chmod 777 data/app/OfficeSuite.apk</span><br><span class="line">chmod 777 data/app/ES.apk</span><br></pre></td></tr></table></figure></p>
-<p>如果预装的apk多起来就很麻烦，你需要反复地修改你的脚本，真的是不堪其扰，因此使用for来处理。</p>
-<p>当然在此之前，你还需要做的是把相关的apk在系统编译时拷贝到/system/usr/app目录下，常规做法是使用在device.mk文件中使用PRODUCT_COPY_FILES拷贝，但是考虑有可能会有很多个apk，我遇到有的客户需要预装10个应用，所以还是采取一劳永逸的办法，批量拷贝，在对应的产品目录下新建一个目录，我这里命名为preinstallApk，将相关的apk拷贝到该目录下，具体mk实现如下。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">define all-data-files-under</span><br><span class="line">$(patsubst ./%,%, \</span><br><span class="line">$(shell <span class="built_in">cd</span> $(LOCAL_PATH)/$(1) ; \</span><br><span class="line">	find ./ -maxdepth 1  -name <span class="string">"*.apk"</span> -and -not -name <span class="string">".*"</span>) \</span><br><span class="line">)</span><br><span class="line">endef</span><br><span class="line"></span><br><span class="line">COPY_APK_TARGET := $(call all-data-files-under,preinstallApk)</span><br><span class="line">PRODUCT_COPY_FILES += $(foreach apkName, $(COPY_APK_TARGET), \</span><br><span class="line">	$(addprefix $(LOCAL_PATH)/preinstallApk/, $(apkName)):$(addprefix system/usr/app/, $(apkName)))</span><br></pre></td></tr></table></figure></p>
-<p>同理，shell脚本也是可以通过PRODUCT_COPY_FILES操作拷贝进系统，你可以选择在device.mk或者preinstall.mk目录添加以下定义<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_COPY_FILES += \</span><br><span class="line">	$(LOCAL_PATH)/install_apk.sh:system/bin/install_apk.sh</span><br></pre></td></tr></table></figure></p>
-<p>至此，Android预装apk可以完成了。<br><!--more--></p>
-
+        <p>昨天客户的工程师问我如何修改系统默认出厂时间，因为他的客户说机器的默认出厂时间太老了，现在都2016年机器的默认出厂时间还是2008年。<br>因为系统的默认时间在在RTC（Real-Time Clock）初始化的，在rtc驱动里面找到那个初始化的时间戳就可以修改掉系统默认的出厂时间了。<br>具体路径在/kernel/drivers/rtc下，具体的平台不同代码位置大概也不一样，这里贴出我找到的代码，我这边默认启动时2007-01-01，刚好能和我的平台时间对上，不过修改的结果还未验证，先Mark下来。<br><a id="more"></a><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">mstar_get_time</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> rtc_time *tm)</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> timeval time;</span><br><span class="line">    do_gettimeofday(&amp;time);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if the time before jan 1 2007, for it to jan 1 2007 to avoid android reboot.</span></span><br><span class="line">    <span class="comment">//修改这个时间就可以</span></span><br><span class="line">    <span class="keyword">if</span>(time.tv_sec &lt; <span class="number">1167652800</span>)</span><br><span class="line">        time.tv_sec = <span class="number">1167652800</span>;</span><br><span class="line"></span><br><span class="line">    rtc_time_to_tm(time.tv_sec, tm);</span><br><span class="line">    return rtc_valid_tm(tm);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//MDrv_RTC_GetCount(0);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    return <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<!--more-->
       
     </div>
 
@@ -388,17 +379,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/05/05/Android-Overlay/" rel="next" title="Android Overlay">
-                <i class="fa fa-chevron-left"></i> Android Overlay
+              <a href="/2016/05/13/关于Android系统无用户操作相关处理/" rel="next" title="关于Android系统无用户操作相关处理">
+                <i class="fa fa-chevron-left"></i> 关于Android系统无用户操作相关处理
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/05/06/使用shell协助自动编译打包Android/" rel="prev" title="使用shell协助自动编译打包Android">
-                使用shell协助自动编译打包Android <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -413,10 +400,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/05/05/Android系统使用Shell脚本预装apk/"
-     data-title="Android系统使用Shell脚本预装apk"
+        <div class="ds-share flat" data-thread-key="2016/05/13/如何修改Android系统默认出厂时间/"
+     data-title="如何修改Android系统默认出厂时间"
      data-content=""
-     data-url="http://yoursite.com/2016/05/05/Android系统使用Shell脚本预装apk/">
+     data-url="http://yoursite.com/2016/05/13/如何修改Android系统默认出厂时间/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -446,8 +433,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/05/05/Android系统使用Shell脚本预装apk/"
-           data-title="Android系统使用Shell脚本预装apk" data-url="http://yoursite.com/2016/05/05/Android系统使用Shell脚本预装apk/">
+      <div class="ds-thread" data-thread-key="2016/05/13/如何修改Android系统默认出厂时间/"
+           data-title="如何修改Android系统默认出厂时间" data-url="http://yoursite.com/2016/05/13/如何修改Android系统默认出厂时间/">
       </div>
     
   </div>
@@ -564,7 +551,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。"><span class="nav-number">1.</span> <span class="nav-text">客户需求：需要在Android系统预安装一个或者若干个apk，客户可以选择自行卸载并且卸载后系统再次启动并不会再次自动安装。</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
         </section>
