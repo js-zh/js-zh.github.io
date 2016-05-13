@@ -1,0 +1,729 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android系统," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="最近开发产品遇到一个需求：当Android系统若干时间内无用户操作响应时启动多媒体轮播应用。
+####思路1：监听输入事件并对其处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于Android系统无用户操作相关处理">
+<meta property="og:url" content="http://yoursite.com/2016/05/13/关于Android系统无用户操作相关处理/index.html">
+<meta property="og:site_name" content="JCoder's World">
+<meta property="og:description" content="最近开发产品遇到一个需求：当Android系统若干时间内无用户操作响应时启动多媒体轮播应用。
+####思路1：监听输入事件并对其处理">
+<meta property="og:updated_time" content="2016-05-13T11:55:38.275Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于Android系统无用户操作相关处理">
+<meta name="twitter:description" content="最近开发产品遇到一个需求：当Android系统若干时间内无用户操作响应时启动多媒体轮播应用。
+####思路1：监听输入事件并对其处理">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 关于Android系统无用户操作相关处理 | JCoder's World </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-77424112-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?49431b65ffe8796452208ad30f180fe4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">JCoder's World</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                关于Android系统无用户操作相关处理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-13T19:14:28+08:00" content="2016-05-13">
+              2016-05-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开发</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/13/关于Android系统无用户操作相关处理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/13/关于Android系统无用户操作相关处理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o">本文阅读量</i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近开发产品遇到一个需求：当Android系统若干时间内无用户操作响应时启动多媒体轮播应用。</p>
+<p>####思路1：监听输入事件并对其处理<br><a id="more"></a><br>接到需求想到的一个土办法就是在android系统input事件响应端对相关输入事件进行处理，可以追溯到android系统输入事件的framework层处理，相关代码目录在frameworks/base/core/java/android/view下，<br>我起初的处理在在ViewRootImpl.java，读者如果对Android输入系统不熟悉的话，最好可以去了解下，这里我就不进行拓展。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">WindowInputEventReceiver</span> <span class="keyword">extends</span> <span class="title">InputEventReceiver</span> </span>&#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">WindowInputEventReceiver</span><span class="params">(InputChannel inputChannel, Looper looper)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">super</span>(inputChannel, looper);</span><br><span class="line">       &#125;    </span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onInputEvent</span><span class="params">(InputEvent event)</span> </span>&#123;</span><br><span class="line">           <span class="comment">//这里获取到各种输入的事件，在此进行相关逻辑处理</span></span><br><span class="line">           Log.d(TAG ,<span class="string">"onInputEvent:"</span>+event.toString());</span><br><span class="line">           enqueueInputEvent(event, <span class="keyword">this</span>, <span class="number">0</span>, <span class="keyword">true</span>);</span><br><span class="line">       &#125;    </span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBatchedInputEventPending</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           scheduleConsumeBatchedInput();</span><br><span class="line">       &#125;    </span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispose</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           unscheduleConsumeBatchedInput();</span><br><span class="line">           <span class="keyword">super</span>.dispose();</span><br><span class="line">       &#125;    </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>####思路2：利用Android系统原有的休眠机制</p>
+<p>Android系统本身是有无操作若干时间后自动休眠的功能，一般在设置程序中的显示这项中找到休眠一项，这里就直接给出相关的代码，实际上这里只是设置了一个SCREEN_OFF_TIMEOUT关键字的数据库字段，相关代码在设置程序的DisplaySettings中。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onPreferenceChange</span><span class="params">(Preference preference, Object objValue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> String key = preference.getKey();</span><br><span class="line">    <span class="keyword">if</span> (KEY_SCREEN_TIMEOUT.equals(key)) &#123;</span><br><span class="line">        <span class="keyword">int</span> value = Integer.parseInt((String) objValue);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="comment">//设置</span></span><br><span class="line">            Settings.System.putInt(getContentResolver(), SCREEN_OFF_TIMEOUT, value);</span><br><span class="line">            updateTimeoutPreferenceDescription(value);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"could not persist screen timeout setting"</span>, e); </span><br><span class="line">        &#125;   </span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">if</span> (KEY_FONT_SIZE.equals(key)) &#123;</span><br><span class="line">        writeFontSizePreference(objValue);</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么实际上的操作处理在哪里呢，经过一段搜索后（搜索SCREEN_OFF_TIMEOUT关键字），我们发现是在PowerManagerService中查找到相关的处理，因为休眠部分涉及到电源管理，读者对这部分有疑问，建议去读下关于PowerManagerService的相关分析，在这里介绍调用到PowerManagerService里关键的方法updateUserActivitySummaryLocked（）。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span><br><span class="line">  * Updates the value of mUserActivitySummary to summarize the user requested</span><br><span class="line">  * state of the system such as whether the screen should be bright or dim.</span><br><span class="line">  * Note that user activity is ignored when the system is asleep.</span><br><span class="line">  *</span><br><span class="line">  * This function must have no other side-effects.</span><br><span class="line">  */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">long</span> mLastUserActivityTimeRecord =<span class="number">0</span>;</span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateUserActivitySummaryLocked</span><span class="params">(<span class="keyword">long</span> now, <span class="keyword">int</span> dirty)</span> </span>&#123;</span><br><span class="line">  Slog.d(TAG, <span class="string">"updateUserActivitySummaryLocked:"</span>+now</span><br><span class="line">+<span class="string">"mLastUserActivityTime:"</span>+mLastUserActivityTime</span><br><span class="line">+<span class="string">"mLastWakeTime:"</span>+mLastWakeTime);</span><br><span class="line">     <span class="comment">// Update the status of the user activity timeout timer.</span></span><br><span class="line">     <span class="keyword">if</span> ((dirty &amp; (DIRTY_USER_ACTIVITY | DIRTY_WAKEFULNESS | DIRTY_SETTINGS)) != <span class="number">0</span>) &#123;</span><br><span class="line">         mHandler.removeMessages(MSG_USER_ACTIVITY_TIMEOUT);</span><br><span class="line"></span><br><span class="line">         <span class="keyword">long</span> nextTimeout = <span class="number">0</span>;</span><br><span class="line">         <span class="keyword">if</span> (mWakefulness != WAKEFULNESS_ASLEEP) &#123;</span><br><span class="line">             <span class="keyword">final</span> <span class="keyword">int</span> screenOffTimeout = getScreenOffTimeoutLocked();</span><br><span class="line">             <span class="keyword">final</span> <span class="keyword">int</span> screenDimDuration = getScreenDimDurationLocked(screenOffTimeout);</span><br><span class="line"></span><br><span class="line">             mUserActivitySummary = <span class="number">0</span>;</span><br><span class="line">             <span class="keyword">if</span> (mLastUserActivityTime &gt;= mLastWakeTime) &#123;</span><br><span class="line">                 nextTimeout = mLastUserActivityTime</span><br><span class="line">                         + screenOffTimeout - screenDimDuration;</span><br><span class="line">                 <span class="keyword">if</span> (now &lt; nextTimeout) &#123;</span><br><span class="line">                     mUserActivitySummary |= USER_ACTIVITY_SCREEN_BRIGHT;</span><br><span class="line">                 &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                     nextTimeout = mLastUserActivityTime + screenOffTimeout;</span><br><span class="line">                     <span class="keyword">if</span> (now &lt; nextTimeout) &#123;</span><br><span class="line">                         mUserActivitySummary |= USER_ACTIVITY_SCREEN_DIM;</span><br><span class="line">                     &#125;</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">             <span class="keyword">if</span> (mUserActivitySummary == <span class="number">0</span></span><br><span class="line">                     &amp;&amp; mLastUserActivityTimeNoChangeLights &gt;= mLastWakeTime) &#123;</span><br><span class="line">                 nextTimeout = mLastUserActivityTimeNoChangeLights + screenOffTimeout;</span><br><span class="line">                 <span class="keyword">if</span> (now &lt; nextTimeout</span><br><span class="line">                         &amp;&amp; mDisplayPowerRequest.screenState</span><br><span class="line">                                 != DisplayPowerRequest.SCREEN_STATE_OFF) &#123;</span><br><span class="line">                     mUserActivitySummary = mDisplayPowerRequest.screenState</span><br><span class="line">                             == DisplayPowerRequest.SCREEN_STATE_BRIGHT ?</span><br><span class="line">                             USER_ACTIVITY_SCREEN_BRIGHT : USER_ACTIVITY_SCREEN_DIM;</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">             <span class="keyword">if</span> (mUserActivitySummary != <span class="number">0</span>) &#123;</span><br><span class="line">                 Message msg = mHandler.obtainMessage(MSG_USER_ACTIVITY_TIMEOUT);</span><br><span class="line">                 msg.setAsynchronous(<span class="keyword">true</span>);</span><br><span class="line">                 mHandler.sendMessageAtTime(msg, nextTimeout);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             mUserActivitySummary = <span class="number">0</span>;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">if</span> (DEBUG_SPEW) &#123;</span><br><span class="line">             Slog.d(TAG, <span class="string">"updateUserActivitySummaryLocked: mWakefulness="</span></span><br><span class="line">                     + wakefulnessToString(mWakefulness)</span><br><span class="line">                     + <span class="string">", mUserActivitySummary=0x"</span> + Integer.toHexString(mUserActivitySummary)</span><br><span class="line">                     + <span class="string">", nextTimeout="</span> + TimeUtils.formatUptime(nextTimeout));</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>读者可以仔细读下这个部分的注释，大概意思是通过这个办法统计更新用户请求的一些信息和状态，通过打印发现这个方法在若干毫秒被系统调用的（具体的回调过程我还没仔细研究）；需要注意的是这里有声明该方法内不能有其他副作用的操作，言下之意不能过多的操作不然系统会崩溃重启。这里我吃过苦头了，反复发一个intent也会导致系统重启，各位看官如果要操作之记得慎重操作。<br>需要注意的变量now，mLastUserActivityTime，mLastWakeTime，大家可以研读其中逻辑打印体会下。只要搞定了这个地方，可以满足目前的需求，而且不用单独去输入系统去做处理，这里的需求推荐思路2去实现。<br><!--more--></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/wetchatpay.jpg" alt="Jason_Zhang WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Jason_Zhang Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android系统/" rel="tag">#Android系统</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/06/使用shell协助自动编译打包Android/" rel="next" title="使用shell协助自动编译打包Android">
+                <i class="fa fa-chevron-left"></i> 使用shell协助自动编译打包Android
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/13/关于Android系统无用户操作相关处理/"
+     data-title="关于Android系统无用户操作相关处理"
+     data-content=""
+     data-url="http://yoursite.com/2016/05/13/关于Android系统无用户操作相关处理/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/13/关于Android系统无用户操作相关处理/"
+           data-title="关于Android系统无用户操作相关处理" data-url="http://yoursite.com/2016/05/13/关于Android系统无用户操作相关处理/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://js-zh.github.io/images/avatar.jpg"
+               alt="Jason_Zhang" />
+          <p class="site-author-name" itemprop="name">Jason_Zhang</p>
+          <p class="site-description motion-element" itemprop="description">记录分享我的开发经验</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/js-zh" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/zjx0829" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason_Zhang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user">本站访客数</i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye">本站总访问量</i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"js-zh"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
