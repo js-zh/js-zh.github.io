@@ -1,0 +1,734 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android系统," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="这几天在测试RK3288平台的recovery升级功能，测试的是打包生成的update.img升级镜像。经过多次测试发现以下问题，kernel部分的logo没被更新。一般情况下原厂recovery升级都是正常的，不过是为了更好地解决问题，也是趁着这个机会去了解下recovery下流程。
+####recovery相关部分的代码路径1234$&amp;#123;code_root&amp;#125;/bootable">
+<meta property="og:type" content="article">
+<meta property="og:title" content="recovery升级遇到的问题及其流程简单分析">
+<meta property="og:url" content="http://yoursite.com/2016/05/17/recovery升级遇到的问题及其流程简单分析/index.html">
+<meta property="og:site_name" content="JCoder's World">
+<meta property="og:description" content="这几天在测试RK3288平台的recovery升级功能，测试的是打包生成的update.img升级镜像。经过多次测试发现以下问题，kernel部分的logo没被更新。一般情况下原厂recovery升级都是正常的，不过是为了更好地解决问题，也是趁着这个机会去了解下recovery下流程。
+####recovery相关部分的代码路径1234$&amp;#123;code_root&amp;#125;/bootable">
+<meta property="og:updated_time" content="2016-05-17T13:25:05.708Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="recovery升级遇到的问题及其流程简单分析">
+<meta name="twitter:description" content="这几天在测试RK3288平台的recovery升级功能，测试的是打包生成的update.img升级镜像。经过多次测试发现以下问题，kernel部分的logo没被更新。一般情况下原厂recovery升级都是正常的，不过是为了更好地解决问题，也是趁着这个机会去了解下recovery下流程。
+####recovery相关部分的代码路径1234$&amp;#123;code_root&amp;#125;/bootable">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> recovery升级遇到的问题及其流程简单分析 | JCoder's World </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-77424112-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?49431b65ffe8796452208ad30f180fe4";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">JCoder's World</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                recovery升级遇到的问题及其流程简单分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-17T21:22:37+08:00" content="2016-05-17">
+              2016-05-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开发/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开发</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/17/recovery升级遇到的问题及其流程简单分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/17/recovery升级遇到的问题及其流程简单分析/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o">本文阅读量</i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这几天在测试RK3288平台的recovery升级功能，测试的是打包生成的update.img升级镜像。经过多次测试发现以下问题，kernel部分的logo没被更新。一般情况下原厂recovery升级都是正常的，不过是为了更好地解决问题，也是趁着这个机会去了解下recovery下流程。</p>
+<p>####recovery相关部分的代码路径<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;code_root&#125;</span>/bootable/recovery</span><br><span class="line"><span class="variable">$&#123;code_root&#125;</span>/bootable/recovery/recovery.cpp</span><br><span class="line"><span class="variable">$&#123;code_root&#125;</span>/bootable/recovery/rkimage.cpp</span><br><span class="line"><span class="variable">$&#123;code_root&#125;</span>/frameworks/base/core/java/android/os/RecoverySystem.java</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>####根据串口跟踪升级流程<br>这里贴出我从串口上取下来的一些关键Log打印<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 1408; [Func] : SetSdcardRootPath; InternalSD_ROOT: /mnt/internal_sd</span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 1410; [Func] : SetSdcardRootPath; ExternalSD_ROOT: /mnt/external_sd</span><br><span class="line">failed to create /cache dir,err=File exists!</span><br><span class="line">D/ [File] : bootable/recovery/recovery.cpp; [Line] : 2265; [Func] : main; to dump args befor get_args() : </span><br><span class="line">         1 argument(s) : </span><br><span class="line">         /sbin/recovery </span><br><span class="line">D/ [File] : bootable/recovery/recovery.cpp; [Line] : 604; [Func] : get_args; to dump <span class="string">'boot'</span> : </span><br><span class="line">         <span class="built_in">command</span> :  </span><br><span class="line">         status :  </span><br><span class="line">         recovery :  </span><br><span class="line">         stage :  </span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 655; [Func] : get_args; Got arguments from /cache/recovery/<span class="built_in">command</span></span><br><span class="line">D/ [File] : bootable/recovery/recovery.cpp; [Line] : 2282; [Func] : main; to dump args after get_args() : </span><br><span class="line">         3 argument(s) : </span><br><span class="line">         /sbin/recovery </span><br><span class="line">         --update_rkimage=/mnt/usb_storage/USB_DISK2/udisk0/update.img </span><br><span class="line">         --locale=zh_CN </span><br><span class="line">locale is [zh_CN]</span><br><span class="line">stage is []</span><br><span class="line">reason is [(null)]</span><br><span class="line"></span><br><span class="line">Recovery system v5.0 </span><br><span class="line"></span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 2379; [Func] : main; Recovery system v5.0, built at <span class="string">'15:49:43'</span>, on <span class="string">'May 17 2016'</span>.</span><br><span class="line">failed to create /mnt/external_sd dir,err=File exists!</span><br><span class="line">W/ [File] : bootable/recovery/roots.cpp; [Line] : 145; [Func] : ensure_path_mounted; trying mount /dev/block/mmcblk1p1 to ntfs</span><br><span class="line">W/ [File] : bootable/recovery/roots.cpp; [Line] : 161; [Func] : ensure_path_mounted; trying mount /dev/block/mmcblk1 to ntfs</span><br><span class="line">E:failed to mount /mnt/external_sd (No such device)</span><br><span class="line">E/ [File] : bootable/recovery/roots.cpp; [Line] : 167; [Func] : ensure_path_mounted; failed to mount /mnt/external_sd (No such device)</span><br><span class="line">delay 2sec</span><br><span class="line">failed to create /mnt/external_sd dir,err=File exists!</span><br><span class="line">W/ [File] : bootable/recovery/roots.cpp; [Line] : 145; [Func] : ensure_path_mounted; trying mount /dev/block/mmcblk1p1 to ntfs</span><br><span class="line">W/ [File] : bootable/recovery/roots.cpp; [Line] : 161; [Func] : ensure_path_mounted; trying mount /dev/block/mmcblk1 to ntfs</span><br><span class="line">E:failed to mount /mnt/external_sd (No such device)</span><br><span class="line">E/ [File] : bootable/recovery/roots.cpp; [Line] : 167; [Func] : ensure_path_mounted; failed to mount /mnt/external_sd (No such device)</span><br><span class="line">delay 2sec</span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> cmdline</span><br><span class="line">Not enter sdboot!</span><br><span class="line">failed to create /mnt/external_sd dir,err=File exists!</span><br><span class="line">W/ [File] : bootable/recovery/roots.cpp; [Line] : 145; [Func] : ensure_path_mounted; trying mount /dev/block/mmcblk1p1 to ntfs</span><br><span class="line">W/ [File] : bootable/recovery/roots.cpp; [Line] : 161; [Func] : ensure_path_mounted; trying mount /dev/block/mmcblk1 to ntfs</span><br><span class="line">E:failed to mount /mnt/external_sd (No such device)</span><br><span class="line">E/ [File] : bootable/recovery/roots.cpp; [Line] : 167; [Func] : ensure_path_mounted; failed to mount /mnt/external_sd (No such device)</span><br><span class="line">failed to create /metadata dir,err=File exists!</span><br><span class="line">[   10.900450] EXT4-fs (mmcblk0p12): mounted filesbotem with ordc ed dmta mo e. Opts: </span><br><span class="line">very<span class="string">" "</span>--update_rkimage=/mnt/usb_storage/USB_DISK2/udisk0/update.img<span class="string">" "</span>--locale=zh_CN<span class="string">"</span><br><span class="line"></span><br><span class="line">findPackageAndMountUsbDevice : searchFile = /mnt/usb_storage/update.img</span><br><span class="line">/dev/block/.</span><br><span class="line">/dev/block/..</span><br><span class="line">/dev/block/sda1</span><br><span class="line">try to mount usb device at /dev/block/sda1 by vfat[   10.934452] FAT-fs (sda1): Volume was not properly unmounted. Some uab updateepackage.. </span><br><span class="line"></span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 2517; [Func] : main; to install rk_img : /mnt/usb_storage/update.img.</span><br><span class="line">Finding update package...</span><br><span class="line">=== UPDATE RKIMAGE===</span><br><span class="line">Find and check firmware...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1286; [Func] : find_update_img; Update location: /mnt/usb_storage/update.img</span><br><span class="line">the path is already mounted!</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1293; [Func] : find_update_img; Update file path: /mnt/usb_storage/update.img</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 514; [Func] : CheckImageFile; Local model: rk3288_box</span><br><span class="line">Update model: rk3288_box</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 521; [Func] : CheckImageFile; Checking...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 361; [Func] : check_image_crc; Check crc okay.</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1924; [Func] : install_rkimage; g_package_target=/mnt/usb_storage/update.img</span><br><span class="line">!!! Please KEEP your USB cable or DC-in connected !!!</span><br><span class="line">E:unknown volume for path [RU_PARTITION_MOUNT_PATH]</span><br><span class="line">E/ [File] : bootable/recovery/roots.cpp; [Line] : 93; [Func] : ensure_path_mounted; unknown volume for path [RU_PARTITION_MOUNT_PATH]</span><br><span class="line">E:unknown volume for path [SYSTEM_PARTITION_MOUNT_PATH]</span><br><span class="line">E/ [File] : bootable/recovery/roots.cpp; [Line] : 93; [Func] : ensure_path_mounted; unknown volume for path [SYSTEM_PARTITION_MOUNT_PATH]</span><br><span class="line">Update boot.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=boot  dest=/boot  offset=0</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 839; [Func] : write_image; dest isFile: 0</span><br><span class="line">Check boot.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1086; [Func] : image_compare; src=boot  dest=/boot  offset=0</span><br><span class="line">Update resource.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=resource  dest=/resource  offset=0</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 839; [Func] : write_image; dest isFile: 0</span><br><span class="line">Check resource.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1086; [Func] : image_compare; src=resource  dest=/resource  offset=0</span><br><span class="line">Update uboot.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=uboot  dest=/uboot  offset=0</span><br><span class="line">E:Can't find uboot </span><br><span class="line">E/ [File] : bootable/recovery/rkimage.cpp; [Line] : 819; [Func] : write_image; Can't find uboot </span><br><span class="line">no uboot.img so ignore</span><br><span class="line">Update trust.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=trust  dest=/trust  offset=0</span><br><span class="line">E:Can't find trust </span><br><span class="line">E/ [File] : bootable/recovery/rkimage.cpp; [Line] : 819; [Func] : write_image; Can't find trust </span><br><span class="line">no trust.img so ignore</span><br><span class="line">Update system...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=system  dest=/system  offset=0</span><br><span class="line">E:Can't find system </span><br><span class="line">E/ [File] : bootable/recovery/rkimage.cpp; [Line] : 819; [Func] : write_image; Can't find system </span><br><span class="line">no boot.img so ignore</span><br><span class="line">Update backup...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=backup  dest=/backup  offset=0</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 839; [Func] : write_image; dest isFile: 0</span><br><span class="line">Check backup...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1086; [Func] : image_compare; src=backup  dest=/backup  offset=0</span><br><span class="line">Update recovery.img...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 812; [Func] : write_image; src=recovery  dest=/recovery  offset=0</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 839; [Func] : write_image; dest isFile: 0</span><br><span class="line">Check recovery...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1086; [Func] : image_compare; src=recovery  dest=/recovery  offset=0</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1496; [Func] : handle_update_script; Read script</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1512; [Func] : handle_update_script; Parse the script</span><br><span class="line">line 3 col 58: syntax error, unexpected STRING, expecting <span class="variable">$end</span></span><br><span class="line">E:1 parse errors</span><br><span class="line">E/ [File] : bootable/recovery/rkimage.cpp; [Line] : 1519; [Func] : handle_update_script; 1 parse errors</span><br><span class="line">handle script error! ignore...</span><br><span class="line">copy Bootloader...</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 612; [Func] : write_loader; src=bootloader  dest=/misc  offset=49152</span><br><span class="line">I/ [File] : bootable/recovery/rkimage.cpp; [Line] : 662; [Func] : write_loader; dest isFile: 0</span><br><span class="line">Installation complete.</span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 2522; [Func] : main; to wipe /data.</span><br><span class="line">Formatting /data...</span><br><span class="line">Creating filesystem with parameters:</span><br><span class="line">    Size: 1073741824</span><br><span class="line">    Block size: 4096</span><br><span class="line">    Blocks per group: 32768</span><br><span class="line">    Inodes per group: 8192</span><br><span class="line">    Inode size: 256</span><br><span class="line">    Journal blocks: 4096</span><br><span class="line">    Label: </span><br><span class="line">    Blocks: 262144</span><br><span class="line">    Block groups: 8</span><br><span class="line">    Reserved block group size: 63</span><br><span class="line">Created filesystem with 11/65536 inodes and 8536/262144 blocks</span><br><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 821; [Func] : finish_recovery; Saving locale "</span>zh_CN<span class="string">"</span><br><span class="line">Rebooting...</span><br><span class="line">[   16.647164] SysRq : Emergency Remount R/O</span><br><span class="line">[   16.649590] EXT4-fs (mmcblk0p12): re-mounted. Opts: (null)</span><br><span class="line">[   16.651388] Emergency Remount complete</span><br><span class="line">[   16.747856] cpufreq: cpufreq: reboot set core rate=1200000000, volt=1100000</span><br><span class="line">[   16.748050] mmcblk mmc0:0001: Unbalanced pm_runtime_enable!</span><br><span class="line">[   17.358818] dwc_otg_driver_shutdown: disconnect USB device mode</span><br><span class="line">[   17.366720] Restarting system with command ''.</span><br><span class="line">DDR Version 1.00 20150318</span></span><br></pre></td></tr></table></figure></p>
+<p>根据Log输出你可以对Recovery的升级过程有大体的了解，针对update.img的升级这里主要涉及recovery.cpp和rkimage.cpp，recovery.cpp是进入recovery升级调用的入口，rkimage.cpp是对update.img进行拆包升级的。这里想说明的是Log是很好帮助你分析流程和问题的工具，多对Log进行分析对你解决问题。</p>
+<p>####简单分析应用上层如何进入recovery升级<br>要想recovery工作，需要往”/cache/recovery/command”这个节点写命令，在Log我们可以发现如下参数，包括升级包的路径和本地语言。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">I/ [File] : bootable/recovery/recovery.cpp; [Line] : 655; [Func] : get_args; Got arguments from /cache/recovery/<span class="built_in">command</span></span><br><span class="line">D/ [File] : bootable/recovery/recovery.cpp; [Line] : 2282; [Func] : main; to dump args after get_args() : </span><br><span class="line">         3 argument(s) : </span><br><span class="line">         /sbin/recovery </span><br><span class="line">         --update_rkimage=/mnt/usb_storage/USB_DISK2/udisk0/update.img </span><br><span class="line">         --locale=zh_CN </span><br><span class="line">locale is [zh_CN]</span><br><span class="line">stage is []</span><br><span class="line">reason is [(null)]</span><br></pre></td></tr></table></figure></p>
+<p>这些参数如何通过上层应用写给/cache/recovery/command节点的，这里可以参考android.os.RecoverySystem这个类里面的相关方法。<br>那recovery里面有哪些可以操作的参数呢，相关的命令可以在recovery.cpp中找到声明。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">struct</span> option OPTIONS[] = &#123;</span><br><span class="line">  &#123; <span class="string">"factory_mode"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'f'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"send_intent"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'s'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"update_package"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'u'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"update_rkimage"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'k'</span> &#125;,   <span class="comment">// support rkimage to update</span></span><br><span class="line">  &#123; <span class="string">"radical_update_package"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'z'</span> &#125;,   <span class="comment">// to support ru_pkg to update</span></span><br><span class="line">  &#123; <span class="string">"wipe_data"</span>, no_argument, <span class="literal">NULL</span>, <span class="string">'w'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"wipe_cache"</span>, no_argument, <span class="literal">NULL</span>, <span class="string">'c'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"show_text"</span>, no_argument, <span class="literal">NULL</span>, <span class="string">'t'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"wipe_all"</span>, no_argument, <span class="literal">NULL</span>, <span class="string">'w'</span>+<span class="string">'a'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"just_exit"</span>, no_argument, <span class="literal">NULL</span>, <span class="string">'x'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"locale"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'l'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"stages"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'g'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"shutdown_after"</span>, no_argument, <span class="literal">NULL</span>, <span class="string">'p'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"fw_update"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'f'</span>+<span class="string">'w'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"demo_copy"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'d'</span> &#125;,</span><br><span class="line">  &#123; <span class="string">"reason"</span>, required_argument, <span class="literal">NULL</span>, <span class="string">'r'</span> &#125;,</span><br><span class="line">  &#123; <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="number">0</span> &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>转换的过程读者可以看下recovery.cpp的main方法，这里就不贴代码了，通过传入参数，recovery会作出选择，本次是升级还是还原操作，是否擦除分区等等。至此上层应用到recovery的过程基本理清。</p>
+<p>####无法升级logo的问题的解决<br>RK3288平台的开机Logo是打包在resource.img中的，在生成镜像时会把resource.img打包到boot.img中，代码中是确实对boot.img中进行升级了。那么问题出在哪里呢？明明升级了但是却没有效果。<br>此时我注意到一个打印数据如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">bootmode = emmc </span><br><span class="line">recovery filesystem table</span><br><span class="line">=========================</span><br><span class="line">  0 /mnt/internal_sd vfat /dev/block/platform/ff0f0000.rksdmmc/by-name/user 0</span><br><span class="line">  1 /mnt/external_sd vfat /dev/block/mmcblk1p1 0</span><br><span class="line">  2 /system ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/system 0</span><br><span class="line">  3 /cache ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/cache 0</span><br><span class="line">  4 /metadata ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/metadata 0</span><br><span class="line">  5 /data ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/userdata 0</span><br><span class="line">  6 /cust ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/cust 0</span><br><span class="line">  7 /custom ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/custom 0</span><br><span class="line">  8 /radical_update ext4 /dev/block/platform/ff0f0000.rksdmmc/by-name/radical_update 0</span><br><span class="line">  9 /misc emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/misc 0</span><br><span class="line">  10 /uboot emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/uboot 0</span><br><span class="line">  11 /charge emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/charge 0</span><br><span class="line">  12 /resource emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/resource 0</span><br><span class="line">  13 /parameter emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/parameter 0</span><br><span class="line">  14 /boot emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/boot 0</span><br><span class="line">  15 /recovery emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/recovery 0</span><br><span class="line">  16 /backup emmc /dev/block/platform/ff0f0000.rksdmmc/by-name/backup 0</span><br><span class="line">  17 /tmp ramdisk ramdisk 0</span><br></pre></td></tr></table></figure></p>
+<p>resource也是有分区，是不是resource.img也需要单独升级呢？带着这样的的疑问，我做了下实验，在rkimage.cpp的install_rkimage方法添加升级resource.img的处理（如下），实验结论就是开机logo可以被更新了。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">ui-&gt;Print(<span class="string">"Update resource.img...\n"</span>);</span><br><span class="line">result = write_image(<span class="string">"resource"</span>, <span class="string">"/resource"</span>, <span class="number">0</span>);</span><br><span class="line">   <span class="keyword">if</span>(result == <span class="number">-4</span>) &#123;</span><br><span class="line">   	<span class="comment">//some times, we not want to boot every time;</span></span><br><span class="line">    ui-&gt;Print(<span class="string">"no resource.img so ignore\n"</span>);</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>(result == <span class="number">0</span>) &#123;</span><br><span class="line">	ui-&gt;Print(<span class="string">"Check resource.img...\n"</span>);</span><br><span class="line">	result = image_compare(<span class="string">"resource"</span>, <span class="string">"/resource"</span>, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span>(result) &#123;</span><br><span class="line">		ui-&gt;Print(<span class="string">"Failed(%d)\n"</span>, result);</span><br><span class="line">		<span class="keyword">goto</span> update_error;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">	ui-&gt;Print(<span class="string">"Failed(%d)\n"</span>, result);</span><br><span class="line">	<span class="keyword">goto</span> update_error;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>问题原因及结论：在工厂升级的时候把resource.img作为一个分区升级到板卡上了，后续如果想更新开机logo必须要把该分区更新。另外的解决办法就是resource.img分区不作为一个分区更新到板卡，和boot.img分区打包在一起即可。<br><!--more--></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/wetchatpay.jpg" alt="Jason_Zhang WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Jason_Zhang Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android系统/" rel="tag">#Android系统</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/13/如何修改Android系统默认出厂时间/" rel="next" title="如何修改Android系统默认出厂时间">
+                <i class="fa fa-chevron-left"></i> 如何修改Android系统默认出厂时间
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/17/recovery升级遇到的问题及其流程简单分析/"
+     data-title="recovery升级遇到的问题及其流程简单分析"
+     data-content=""
+     data-url="http://yoursite.com/2016/05/17/recovery升级遇到的问题及其流程简单分析/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/17/recovery升级遇到的问题及其流程简单分析/"
+           data-title="recovery升级遇到的问题及其流程简单分析" data-url="http://yoursite.com/2016/05/17/recovery升级遇到的问题及其流程简单分析/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://js-zh.github.io/images/avatar.jpg"
+               alt="Jason_Zhang" />
+          <p class="site-author-name" itemprop="name">Jason_Zhang</p>
+          <p class="site-description motion-element" itemprop="description">记录分享我的开发经验</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/js-zh" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/zjx0829" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason_Zhang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user">本站访客数</i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye">本站总访问量</i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"js-zh"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
